@@ -16,4 +16,5 @@ for idx, item in enumerate(saved_tracks['items']):
     track = item['track']
     print(f"{idx+1}. {track['name']} - {track['artists'][0]['name']}")
     lyrics = get_lyrics(track['name'], track['artists'][0]['name'])
+    print(lyrics)
 print("\n")
