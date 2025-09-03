@@ -1,28 +1,18 @@
 import json
 import lyricsgenius
 import requests
-import spotipy
 import os
-from spotipy.oauth2 import SpotifyOAuth
 from dotenv import load_dotenv
 from langdetect import detect
+from spotify_client import create_spotify_client
 
 load_dotenv()
 
-SPOTIFY_CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
-SPOTIFY_SECRET_KEY = os.getenv("SPOTIFY_SECRET_KEY")
-SPOTIFY_REDIRECT_URI = os.getenv("SPOTIFY_REDIRECT_URI")
+# Create spotify client
+sp = create_spotify_client()
 
 GENIUS_API_TOKEN = os.getenv("GENIUS_API_TOKEN")
 
-sp_oauth = SpotifyOAuth(
-    client_id=SPOTIFY_CLIENT_ID,
-    client_secret=SPOTIFY_SECRET_KEY,
-    redirect_uri=SPOTIFY_REDIRECT_URI,
-    scope="user-library-read",
-    show_dialog=True,
-    cache_path=".spotify_token_cache"
-)
 
 def get_song_id(song_name, artist_name):
     headers = {'Authorization': f"Bearer {GENIUS_API_TOKEN}"}
@@ -59,20 +49,6 @@ def get_song_data(song_id):
         return None
 
 
-# Try to get cached token
-token_info = sp_oauth.get_cached_token()
-
-if not token_info:
-    # No cached token or expired → ask user to authorize
-    auth_url = sp_oauth.get_authorize_url()
-    print("Go here and authorize:", auth_url)
-    response = input("Paste the full redirect URL here: ")
-    code = sp_oauth.parse_response_code(response)
-    token_info = sp_oauth.get_access_token(code)
-
-# Create Spotify client
-sp = spotipy.Spotify(auth=token_info['access_token'])
-
 # --- Fetch current user info ---
 user = sp.current_user()
 print(f"Logged in as: {user['display_name']} ({user['id']})\n")
@@ -91,8 +67,6 @@ for idx, item in enumerate(saved_tracks['items']):
     print(song.lyrics)
     detection = detect(song.lyrics)
     print(detection)
-    # lyrics = extract_lyrics(song_data)
-    # print(lyrics)
     # print(json.dumps(song_data, indent=2))
 print("\n")
 
