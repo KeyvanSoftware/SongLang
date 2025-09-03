@@ -1,10 +1,11 @@
 import json
-import lyricsgenius
+# import lyricsgenius
 import requests
 import os
 from dotenv import load_dotenv
 from langdetect import detect
 from spotify_client import create_spotify_client
+from genius_client import get_lyrics
 
 load_dotenv()
 
@@ -59,41 +60,5 @@ saved_tracks = sp.current_user_saved_tracks(limit=1)
 for idx, item in enumerate(saved_tracks['items']):
     track = item['track']
     print(f"{idx+1}. {track['name']} - {track['artists'][0]['name']}")
-    song_id = get_song_id(track['name'], track['artists'][0]['name'])
-    print(f"Song ID: {song_id}")
-    # song_data = get_song_data(song_id)
-    genius = lyricsgenius.Genius(GENIUS_API_TOKEN)
-    song = genius.search_song(track['name'], track['artists'][0]['name'])
-    print(song.lyrics)
-    detection = detect(song.lyrics)
-    print(detection)
-    # print(json.dumps(song_data, indent=2))
+    lyrics = get_lyrics(track['name'], track['artists'][0]['name'])
 print("\n")
-
-# --- Fetch all liked songs ---
-# print("Your number of liked songs:")
-# all_tracks = []
-# limit = 50
-# offset = 0
-
-# while True:
-#     results = sp.current_user_saved_tracks(limit=limit, offset=offset)
-#     if not results['items']:
-#         break
-#     all_tracks.extend(results['items'])
-#     offset += len(results['items'])
-
-# print(f"Total liked songs fetched: {len(all_tracks)}")
-
-# track_ids = [item['track']['id'] for item in all_tracks if item['track']['id']]
-
-# features_list = []
-# batch_size = 50  # Max 100 per request
-# for i in range(0, len(track_ids), batch_size):
-#     batch_ids = track_ids[i:i+batch_size]
-#     try:
-#         batch_features = sp.audio_features(batch_ids)
-#         features_list.extend(batch_features)
-#     except spotipy.SpotifyException as e:
-#         print(f"Skipping batch {i} due to error: {e}")
-#         features_list.extend([None]*len(batch_ids))
