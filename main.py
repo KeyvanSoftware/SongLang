@@ -1,22 +1,40 @@
+import json
+import requests
 import spotipy
 import os
-import csv
 from spotipy.oauth2 import SpotifyOAuth
 from dotenv import load_dotenv
 
 load_dotenv()
 
-client_id = os.getenv("CLIENT_ID")
-client_secret = os.getenv("SECRET_KEY")
+SPOTIFY_CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
+SPOTIFY_SECRET_KEY = os.getenv("SPOTIFY_SECRET_KEY")
+SPOTIFY_REDIRECT_URI = os.getenv("SPOTIFY_REDIRECT_URI")
+
+GENIUS_API_TOKEN = os.getenv("GENIUS_API_TOKEN")
 
 sp_oauth = SpotifyOAuth(
-    client_id=client_id,
-    client_secret=client_secret,
-    redirect_uri="http://127.0.0.1:8888/callback",
+    client_id=SPOTIFY_CLIENT_ID,
+    client_secret=SPOTIFY_SECRET_KEY,
+    redirect_uri=SPOTIFY_REDIRECT_URI,
     scope="user-library-read",
     show_dialog=True,
     cache_path=".spotify_token_cache"
 )
+
+def get_song_id(song_name, artist_name):
+    headers = {'Authorization': f"Bearer {GENIUS_API_TOKEN}"}
+    search_url = 'https://api.genius.com/search'
+    params = {'q': f'{song_name} {artist_name}'}
+
+    response = requests.get(search_url, params=params, headers=headers)
+    data = response.json()
+
+    if data['response']['hits']:
+        return data['response']['hits'][0]['result']['id']
+    else:
+        return None
+
 
 # Try to get cached token
 token_info = sp_oauth.get_cached_token()
@@ -38,7 +56,7 @@ print(f"Logged in as: {user['display_name']} ({user['id']})\n")
 
 # --- Fetch first 5 liked songs ---
 print("Your first 5 liked songs:")
-saved_tracks = sp.current_user_saved_tracks(limit=5)
+saved_tracks = sp.current_user_saved_tracks(limit=1)
 for idx, item in enumerate(saved_tracks['items']):
     track = item['track']
     print(f"{idx+1}. {track['name']} - {track['artists'][0]['name']}")
