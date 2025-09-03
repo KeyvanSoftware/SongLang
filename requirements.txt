@@ -1,3 +1,4 @@
 spotipy
 langdetect
 python-dotenv
+lyricsgenius
