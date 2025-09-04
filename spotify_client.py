@@ -14,7 +14,7 @@ def create_spotify_client():
         client_id=SPOTIFY_CLIENT_ID,
         client_secret=SPOTIFY_SECRET_KEY,
         redirect_uri=SPOTIFY_REDIRECT_URI,
-        scope="user-library-read",
+        scope="user-library-read playlist-modify-private playlist-modify-public",
         show_dialog=True,
         cache_path=".spotify_token_cache"
     )
