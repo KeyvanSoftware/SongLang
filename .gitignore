@@ -9,6 +9,10 @@ ENV/
 env/
 .env/
 
+# Environment variables
+.env
+.spotify_token_cache
+
 # IDE specific files
 .idea/
 .vscode/
