@@ -2,3 +2,4 @@ spotipy
 langdetect
 python-dotenv
 lyricsgenius
+pycountry

@@ -1,6 +1,6 @@
 from spotify_client import create_spotify_client
 from genius_client import get_lyrics
-from utils import detect_language, group_by_language, songs_by_language
+from utils import detect_language, group_by_language, songs_by_language, get_language_name
 from track_cleaning import clean_title
 
 # Create spotify client
@@ -28,4 +28,8 @@ for idx, item in enumerate(saved_tracks['items']):
     group_by_language(language, track['uri'])
     print("Language: ", language)
 print("\n")
-print(dict(songs_by_language))
+
+for language, uri_list in songs_by_language.items():
+    playlist_title = get_language_name(language)
+    playlist = sp.user_playlist_create(user=user['id'], name=playlist_title)
+    sp.user_playlist_add_tracks(user=user['id'], playlist_id=playlist['id'], tracks=uri_list)
