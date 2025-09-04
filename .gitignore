@@ -1,0 +1,14 @@
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+.env/
+
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+*.sln
+.vs/
